@@ -1,0 +1,14 @@
+---
+import { cn } from '../../lib/utils';
+
+interface Props {
+  class?: string;
+  as?: 'div' | 'section' | 'article' | 'main' | 'header' | 'footer';
+}
+
+const { class: className, as: Tag = 'div' } = Astro.props;
+---
+
+<Tag class={cn('container-custom', className)}>
+  <slot />
+</Tag>
