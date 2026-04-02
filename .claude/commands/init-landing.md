@@ -1,219 +1,89 @@
 # /init-landing
 
-You are generating a complete landing page from scratch. Read everything carefully before writing a single file.
+Generate a complete landing page from scratch based on `INTAKE.md`.
 
 ---
 
-## Step 1 — Read and parse INTAKE.md
+## Step 1 — Read INTAKE.md
 
-Read `INTAKE.md` fully. Extract and hold in working memory:
+Extract everything: product, audience, sections, design direction, mood, graphics strategy, technical notes.
 
-- **Tier** (1, 2, or 3) — determines how many assumptions you're allowed to make
-- **Product**: name, tagline, description
-- **Audience**: who, pain, goal
-- **Value proposition**: main benefit, features list, differentiator
-- **Sections**: which are checked [x]
-- **Content hints**: pricing plans, FAQ questions, testimonials
-- **Design direction**: mood, primary color, feel, typography vibe
-- **Graphics strategy**: placeholder | svg-icons | inline-svg | provided
-- **Technical**: CTA action, domain, analytics
-
-**Tier rules:**
-- Tier 1: INTAKE has very little info. Make bold assumptions on structure, copy, and design. Prioritize impact over accuracy. Document your assumptions at the end.
-- Tier 2: INTAKE has partial info. Fill gaps intelligently using audience context and mood. No need to document assumptions.
-- Tier 3: INTAKE is a full brief. Execute exactly. Do not add sections not listed, do not invent copy.
+Determine the tier:
+- **Tier 1** (bare idea): make bold creative assumptions — document them at the end
+- **Tier 2** (partial brief): fill gaps using mood + audience context
+- **Tier 3** (full brief): execute exactly, no additions
 
 ---
 
-## Step 2 — Apply copywriting skill
+## Step 2 — Write copy
 
-Use your copywriting skill to:
-- Write a punchy, benefit-driven headline for Hero (if INTAKE tagline is weak or missing)
-- Write subheadline that addresses the audience's pain point
-- Write feature descriptions (2-3 sentences each) that lead with benefit, not feature name
-- Write CTA button text that implies action + value ("Start building free" not "Sign up")
-- Write FAQ answers if questions were provided
-- Write testimonial placeholders if "generate placeholders" was specified
+All context is in INTAKE.md — do not ask questions, make decisions and proceed.
 
-Hold all copy in memory — do not write files yet.
+Write all user-facing text now, before touching any file:
+- Headline that leads with outcome, not feature name
+- Subheadline that speaks to the audience's pain
+- Feature/step descriptions (benefit-first, 2–3 sentences)
+- CTA text that implies action + value ("Start building free", not "Sign up")
+- FAQ answers, testimonial copy, pricing plan names — anything from INTAKE hints
 
----
+Use your copywriting skill if INTAKE is thin on copy direction. Pass it everything from INTAKE — it should not ask questions.
 
-## Step 3 — Apply frontend-design skill
-
-Use your frontend-design skill to make these decisions based on INTAKE mood + audience:
-
-**Color palette** (generate 6 values):
-- `--color-primary`: main brand color (CTA buttons, hero accents)
-- `--color-primary-hover`: 10% darker variant
-- `--color-secondary`: complementary accent
-- `--color-accent`: highlight / badge color
-- `--color-background`: page background
-- `--color-surface`: card / section alternate background
-
-Derive `--color-text`, `--color-text-secondary`, `--color-text-muted`, `--color-border` from the palette.
-
-**Typography** (pick Google Fonts pair):
-- `--font-heading`: display/heading font — should match the mood
-- `--font-sans`: body font — readable, harmonious with heading font
-- Import both via `next/font/google` in `layout.tsx`
-
-**Radius + shadows**: set values that match the mood
-- minimal/technical → sharp, `--radius-sm: 4px`, subtle shadows
-- playful/bold → rounder, `--radius-lg: 16px`, more pronounced shadows
-- luxury → medium radius, `--shadow-lg` with soft spread
-
-**Hero visual treatment**: decide based on mood and graphics strategy
-- What goes in the background/right column of Hero?
-
-Hold all decisions in memory — do not write files yet.
+Hold copy in memory. Do not write files yet.
 
 ---
 
-## Step 4 — Apply ui-ux-pro-max skill
+## Step 3 — Design decisions
 
-Use your ui-ux-pro-max skill to design the component language for this project:
+Commit to a specific aesthetic before coding:
+- **Color palette**: primary, primary-hover, secondary, accent, background, surface, text, text-secondary, text-muted, border — all as hex values
+- **Font pair**: heading + body via Google Fonts, matching the mood
+- **Radius + shadow scale**: sharp for minimal/technical, rounder for playful, soft for luxury
+- **Hero visual treatment**: what fills the background or right column?
+- **Component language**: what do buttons, cards, and badges look like for *this* product?
 
-- **Button style**: shape, size, hover behavior, border vs filled vs ghost variants
-- **Card style**: border vs shadow, padding, hover interaction
-- **Badge style**: pill vs square, subtle vs bold
-- **Section rhythm**: how much vertical padding, how sections transition into each other
-- **Icon treatment**: size, stroke weight, color (primary vs muted)
+Use your frontend-design skill for color + typography. It produces CSS custom properties — make sure the output maps to the `@theme inline {}` token names already in `globals.css` (`--color-primary`, `--color-background`, `--font-heading`, etc.).
 
-These decisions define what the generated components look like — make them cohesive and appropriate for the audience.
+Constraint check (inline):
+- Body text on background contrast ≥ 4.5:1 — self-correct if not
+- Body font ≥ 16px equivalent
+- Interactive targets ≥ 44px
 
----
-
-## Step 5 — Apply web-design-guidelines skill
-
-Validate your decisions against web design best practices:
-- Contrast ratios — body text on background must meet WCAG AA (4.5:1)
-- CTA button contrast — primary text on primary bg must be readable
-- Font size minimum — body text ≥ 16px equivalent
-- Touch targets — interactive elements ≥ 44px
-- Flag any decision that would fail these checks and self-correct before proceeding
+Hold decisions in memory. Do not write files yet.
 
 ---
 
-## Step 6 — Generate `src/content/landing.ts`
+## Step 4 — Generate foundation files
 
-Write the complete typed landing content object.
-Include only sections that are checked in INTAKE.
-Use the copy from Step 2.
+Write in this order:
 
-```ts
-const landing = {
-  meta: {
-    title: "...",
-    description: "...",
-    ogImage: "/og-image.png",
-  },
-  hero: { ... },
-  features: { items: [...] },
-  // only sections that are checked
-} as const;
-
-export type Landing = typeof landing;
-export default landing;
-```
+1. **`src/content/landing.ts`** — complete typed content object, only sections checked in INTAKE
+2. **`src/app/globals.css`** — replace placeholder tokens with real values; update `@theme inline {}`
+3. **`src/app/layout.tsx`** — add Google Font imports, apply CSS vars to `<html>`, update metadata from `landing.meta`
 
 ---
 
-## Step 7 — Update `src/app/globals.css`
+## Step 5 — Generate sections
 
-Replace the placeholder token values in `:root {}` with the actual values from Step 3.
-Update `@theme inline {}` to include all new token names used in components.
-Add font face references if using variable fonts.
+For each checked section in order: Hero → LogoCloud → Features → HowItWorks → Pricing → Testimonials → FAQ → CTA → Footer
 
----
+Each section file at `src/sections/SectionName/SectionName.tsx`:
+- Imports from `@/content/landing` — no hardcoded copy
+- Uses token-mapped utilities only — no raw palette classes
+- Looks and feels right for *this* product's audience and mood — not generic
+- Shared components (used 2+) go in `src/components/`
 
-## Step 8 — Update `src/app/layout.tsx`
-
-- Add `import { FontName } from "next/font/google"` for both fonts decided in Step 3
-- Apply font CSS variables to `<html>` className
-- Update `export const metadata` with values from `landing.meta`
-
----
-
-## Step 9 — Generate sections (in page order)
-
-For each checked section, create `src/sections/SectionName/SectionName.tsx`.
-
-Follow the section patterns in CLAUDE.md.
-Apply the component language decisions from Step 4.
-Apply the graphics strategy from INTAKE.
-
-Generate sections in this order: Hero → LogoCloud → Features → HowItWorks → Pricing → Testimonials → FAQ → CTA → Footer
-
-**For each section:**
-- Import from `@/content/landing`
-- No hardcoded copy
-- No raw Tailwind palette colors
-- All components (Button, Card, Badge, etc.) defined inline or imported from `@/components/`
-
-If a component is reused across 2+ sections, create it as a shared component in `src/components/`.
+Build quality in as you write — don't plan a separate polish pass:
+- Hover + focus states on every interactive element
+- `transition-all duration-200` on buttons and cards
+- Sections alternate `bg-background` / `bg-surface`
+- Mobile-first: grids collapse at `md:`, headings scale down
 
 ---
 
-## Step 10 — Update `src/app/page.tsx`
+## Step 6 — Compose, build, report
 
-Import all generated sections and compose the page:
+Update `src/app/page.tsx` with all section imports in order.
 
-```tsx
-import Hero from "@/sections/Hero/Hero";
-// ... all sections
+Run `npm run build`. If it fails, read the error, fix it, re-run. Do not finish until build passes.
 
-export default function Home() {
-  return (
-    <>
-      <Hero />
-      {/* all checked sections in order */}
-    </>
-  );
-}
-```
-
----
-
-## Step 11 — Apply polish skill
-
-Use your polish skill for a final pass:
-- Hover states on all interactive elements
-- Focus rings for keyboard navigation
-- Spacing consistency — check that vertical rhythm feels even
-- Mobile layout — mentally check at 375px width
-- Micro-animations — `transition-all duration-200` on buttons, cards
-- Check that section backgrounds alternate correctly
-
-Apply fixes directly to the generated files.
-
----
-
-## Step 12 — Validate
-
-Run `npm run build`. If it fails:
-- Read the error
-- Fix the specific issue
-- Re-run build
-- Do not proceed until build passes
-
----
-
-## Step 13 — Output summary
-
-After successful build, print:
-
-```
-✓ Build passed
-
-Generated sections: [list]
-Design decisions:
-  Primary color: [value] — [reasoning from mood]
-  Fonts: [heading] + [body]
-  Mood: [mood word]
-
-Assumptions made: [list if Tier 1, otherwise "none"]
-
-TODOs remaining:
-  [list any placeholder images/illustrations that need real assets]
-```
+Print:
